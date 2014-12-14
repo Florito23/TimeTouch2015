@@ -1,4 +1,4 @@
-package view
+package timetouch.view
 {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -18,11 +18,11 @@ package view
 	import utils.graphic.TextButtonSimple;
 	import utils.graphic.TextButtonSimpleEvent;
 	
-	[Event(name="pausePressed", type="view.TimeControlViewEvent")]
-	[Event(name="playPressed", type="view.TimeControlViewEvent")]
+	[Event(name="pausePressed", type="timetouch.view.TimeControlViewEvent")]
+	[Event(name="playPressed", type="timetouch.view.TimeControlViewEvent")]
 	
-	[Event(name="ffdPressing", type="view.TimeControlViewEvent")]
-	[Event(name="rewPressing", type="view.TimeControlViewEvent")]
+	[Event(name="ffdPressing", type="timetouch.view.TimeControlViewEvent")]
+	[Event(name="rewPressing", type="timetouch.view.TimeControlViewEvent")]
 	
 	public class TimeControlView extends MovieClip
 	{
@@ -108,11 +108,7 @@ package view
 			addChild(_timeField);
 			
 			
-			var bg:Sprite = new Sprite();
-			bg.graphics.lineStyle(1,0);
-			bg.graphics.beginFill(0xeeeeee);
-			bg.graphics.drawRoundRect(0,0,_timeField.getBounds(this).right+5, _ffdButton.getBounds(this).bottom+5,5,5);
-			bg.graphics.endFill();
+			var bg:CurvedBackground = new CurvedBackground(0,0,_timeField.getBounds(this).right+5, _ffdButton.getBounds(this).bottom+5);
 			addChildAt(bg, 0);
 			
 			

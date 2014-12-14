@@ -14,9 +14,10 @@ package
 	import timetouch.timecontrol.FreeTimeControl;
 	import timetouch.timecontrol.TimeControl;
 	import timetouch.timecontrol.TimeControlEvent;
-	
-	import view.TimeControlView;
-	import view.TimeControlViewEvent;
+	import timetouch.view.DrawingView;
+	import timetouch.view.DrawingViewEvent;
+	import timetouch.view.TimeControlView;
+	import timetouch.view.TimeControlViewEvent;
 	
 	public class TimeTouch2015 extends Sprite
 	{
@@ -28,6 +29,7 @@ package
 		*/
 		
 		private var _timeControlView:TimeControlView;
+		private var _drawingView:DrawingView;
 		
 		
 		public function TimeTouch2015()
@@ -85,11 +87,17 @@ package
 				Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			}
 			
+			// time view
 			_timeControlView = new TimeControlView();
-			_timeControlView.x = 15;
-			_timeControlView.y = 15;
+			_timeControlView.x = 10;
+			_timeControlView.y = 10;
 			addChild(_timeControlView);
 			
+			// drawing view
+			_drawingView = new DrawingView(stage.stageWidth-20, stage.stageHeight-30-_timeControlView.height);
+			_drawingView.x = _timeControlView.getBounds(this).x;
+			_drawingView.y = _timeControlView.getBounds(this).bottom + 10;
+			addChild(_drawingView);
 			
 		}
 		
@@ -115,6 +123,10 @@ package
 			_timeControlView.addEventListener(TimeControlViewEvent.FFD_PRESSING, onFFD);
 			_timeControlView.addEventListener(TimeControlViewEvent.REW_PRESSING, onREW);
 			
+			// drawing view
+			_drawingView.addEventListener(DrawingViewEvent.DRAWING_BEGIN, onDrawBegin);
+			_drawingView.addEventListener(DrawingViewEvent.DRAWING_MOVE, onDrawMove);
+			_drawingView.addEventListener(DrawingViewEvent.DRAWING_END, onDrawEnd);
 		}
 		
 		protected function onUpdateTime(event:TimeControlEvent):void
@@ -144,6 +156,16 @@ package
 			var remove:Number = - 100 - (engine.timeControl.playing ? (1000/stage.frameRate) : 0);
 			var newTime:Number = Math.max(0, engine.timeControl.currentTimeMilliseconds + remove);
 			engine.timeControl.setCurrentTimeMilliseconds(newTime);
+		}
+		
+		protected function onDrawBegin(e:DrawingViewEvent):void {
+			print(this, "onDrawBegin()", e.touchID, e.localX, e.localY);
+		}
+		protected function onDrawMove(e:DrawingViewEvent):void {
+			print(this, "onDrawMove()", e.touchID, e.localX, e.localY);
+		}
+		protected function onDrawEnd(e:DrawingViewEvent):void {
+			print(this, "onDrawEnd()", e.touchID, e.localX, e.localY);
 		}
 		
 	}

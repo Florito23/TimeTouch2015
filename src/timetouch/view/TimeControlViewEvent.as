@@ -1,4 +1,4 @@
-package view
+package timetouch.view
 {
 	import flash.events.Event;
 	
