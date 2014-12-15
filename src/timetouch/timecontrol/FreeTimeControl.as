@@ -7,20 +7,24 @@ package timetouch.timecontrol
 	public class FreeTimeControl extends TimeControl
 	{
 	
+		//TODO: Change into _systemTimeAtLastPlayOrLoop (for more accuracy)
 		private var _systemTimeAtLastSetCurrentTime:Number;
+		
 		private var _timerMc:MovieClip;
 		
-		public function FreeTimeControl()
+		public function FreeTimeControl(clockMode:String)
 		{
-			super();
+			super(clockMode);
 			_currentTimeMilliseconds = 0;
 			_lastTimeMilliseconds = 0;
 			_systemTimeAtLastSetCurrentTime = getTimer();
-			_timerMc = new MovieClip();
-			_timerMc.addEventListener(Event.ENTER_FRAME, onFrame);
+			if (clockMode==INTERNAL_CLOCK) {
+				_timerMc = new MovieClip();
+				_timerMc.addEventListener(Event.ENTER_FRAME, updateTime);
+			}
 		}
 		
-		protected function onFrame(event:Event):void
+		override public function updateTime(event:Event = null):void
 		{
 			var ti:Number = getTimer();
 			if (_playing) {

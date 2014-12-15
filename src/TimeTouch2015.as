@@ -14,10 +14,10 @@ package
 	import timetouch.timecontrol.FreeTimeControl;
 	import timetouch.timecontrol.TimeControl;
 	import timetouch.timecontrol.TimeControlEvent;
-	import timetouch.view.DrawingView;
-	import timetouch.view.DrawingViewEvent;
-	import timetouch.view.TimeControlView;
-	import timetouch.view.TimeControlViewEvent;
+	import view.DrawingView;
+	import timetouch.surface.DrawingSurfaceEvent;
+	import view.TimeControlView;
+	import view.TimeControlViewEvent;
 	
 	public class TimeTouch2015 extends Sprite
 	{
@@ -29,7 +29,7 @@ package
 		*/
 		
 		private var _timeControlView:TimeControlView;
-		private var _drawingView:DrawingView;
+		//private var _drawingView:DrawingView;
 		
 		
 		public function TimeTouch2015()
@@ -55,9 +55,10 @@ package
 		private function initEngine():void
 		{
 			engine = new TimeTouch();
-			engine.timeControl = new FreeTimeControl();
+			engine.timeControl = new FreeTimeControl(TimeControl.EXTERNAL_CLOCK);
+			
 		}
-				
+						
 		
 		
 		
@@ -94,11 +95,12 @@ package
 			addChild(_timeControlView);
 			
 			// drawing view
-			_drawingView = new DrawingView(stage.stageWidth-20, stage.stageHeight-30-_timeControlView.height);
-			_drawingView.x = _timeControlView.getBounds(this).x;
-			_drawingView.y = _timeControlView.getBounds(this).bottom + 10;
-			addChild(_drawingView);
+			var drawingView:DrawingView = new DrawingView(stage.stageWidth-20, stage.stageHeight-30-_timeControlView.height);
+			drawingView.x = _timeControlView.getBounds(this).x;
+			drawingView.y = _timeControlView.getBounds(this).bottom + 10;
+			addChild(drawingView);
 			
+			engine.drawingSurface = drawingView;
 		}
 		
 		
@@ -123,10 +125,8 @@ package
 			_timeControlView.addEventListener(TimeControlViewEvent.FFD_PRESSING, onFFD);
 			_timeControlView.addEventListener(TimeControlViewEvent.REW_PRESSING, onREW);
 			
-			// drawing view
-			_drawingView.addEventListener(DrawingViewEvent.DRAWING_BEGIN, onDrawBegin);
-			_drawingView.addEventListener(DrawingViewEvent.DRAWING_MOVE, onDrawMove);
-			_drawingView.addEventListener(DrawingViewEvent.DRAWING_END, onDrawEnd);
+			// enter frame
+			addEventListener(Event.ENTER_FRAME, onFrame);
 		}
 		
 		protected function onUpdateTime(event:TimeControlEvent):void
@@ -158,15 +158,18 @@ package
 			engine.timeControl.setCurrentTimeMilliseconds(newTime);
 		}
 		
-		protected function onDrawBegin(e:DrawingViewEvent):void {
-			print(this, "onDrawBegin()", e.touchID, e.localX, e.localY);
+		
+		
+		
+		
+		
+		protected function onFrame(event:Event):void
+		{
+			engine.timeControl.updateTime();
 		}
-		protected function onDrawMove(e:DrawingViewEvent):void {
-			print(this, "onDrawMove()", e.touchID, e.localX, e.localY);
-		}
-		protected function onDrawEnd(e:DrawingViewEvent):void {
-			print(this, "onDrawEnd()", e.touchID, e.localX, e.localY);
-		}
+		
+		
+		
 		
 	}
 }

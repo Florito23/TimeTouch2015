@@ -1,19 +1,20 @@
-package timetouch.view
+package view
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.ui.Multitouch;
 	
 	import logger.print;
 	
-	[Event(name="drawingBegin", type="timetouch.view.DrawingViewEvent")]
-	[Event(name="drawingMove", type="timetouch.view.DrawingViewEvent")]
-	[Event(name="drawingEnd", type="timetouch.view.DrawingViewEvent")]
+	import timetouch.surface.DrawingSurface;
+	import timetouch.surface.DrawingSurfaceEvent;
 	
-	public class DrawingView extends Sprite
+	public class DrawingView extends DrawingSurface
 	{
 		
+		private var bg:Sprite;
 		private var WIDTH:int;
 		private var HEIGHT:int;
 		
@@ -30,7 +31,7 @@ package timetouch.view
 			print(this, "onStage()");
 			removeEventListener(Event.ADDED_TO_STAGE, onStage);
 			
-			var bg:Sprite = new CurvedBackground(0,0,WIDTH,HEIGHT);
+			bg = new CurvedBackground(0,0,WIDTH,HEIGHT);
 			addChild(bg);
 			
 			if (Multitouch.supportsTouchEvents) {
@@ -51,22 +52,23 @@ package timetouch.view
 		
 		protected function onMouseBegin(event:MouseEvent):void
 		{
-			_mouseDragging = true;
-			//TODO: NOT LOCALX!!!
-			dispatchDrawingViewEvent(DrawingViewEvent.DRAWING_BEGIN, 0, bgX, bgY);
+			if (!_mouseDragging) {
+				_mouseDragging = true;
+				var loc:Point = bg.globalToLocal(new Point(event.stageX, event.stageY));
+				dispatchDrawingSurfaceEvent(DrawingSurfaceEvent.DRAWING_BEGIN, 0, loc.x, loc.y);
+			}
 		}
 		
 		protected function onMouseMove(event:MouseEvent):void
 		{
 			
 			if (_mouseDragging) {
-				var x:Number = event.localX;
-				var y:Number = event.localY;
-				if (x>=0&&x<WIDTH&&y>=0&&y<HEIGHT) {
-					dispatchDrawingViewEvent(DrawingViewEvent.DRAWING_MOVE, 0, bgX, bgY);	
+				var loc:Point = bg.globalToLocal(new Point(event.stageX, event.stageY));
+				if (loc.x>=0&&loc.x<WIDTH&&loc.y>=0&&loc.y<HEIGHT) {
+					dispatchDrawingSurfaceEvent(DrawingSurfaceEvent.DRAWING_MOVE, 0, loc.x, loc.y);	
 				} else {
 					_mouseDragging = false;
-					dispatchDrawingViewEvent(DrawingViewEvent.DRAWING_END, 0, bgX, bgY);
+					dispatchDrawingSurfaceEvent(DrawingSurfaceEvent.DRAWING_END, 0, loc.x, loc.y);
 				}
 				
 			}
@@ -74,23 +76,17 @@ package timetouch.view
 		
 		protected function onMouseEnd(event:MouseEvent):void
 		{
-			_mouseDragging = false;
-			dispatchDrawingViewEvent(DrawingViewEvent.DRAWING_END, 0, bgX, bgY);
+			if (_mouseDragging) {
+				_mouseDragging = false;
+				var loc:Point = bg.globalToLocal(new Point(event.stageX, event.stageY));
+				dispatchDrawingSurfaceEvent(DrawingSurfaceEvent.DRAWING_END, 0, loc.x, loc.y);
+			}
 		}
 		
 		
 		
 		
-		
-		
-		private function dispatchDrawingViewEvent(drawingViewEventType:String, touchID:int, localX:Number, localY:Number):void
-		{
-			var e:DrawingViewEvent = new DrawingViewEvent(drawingViewEventType);
-			e.touchID = touchID;
-			e.localX = localX;
-			e.localY = localY;
-			dispatchEvent(e);
-		}		
+				
 		
 	}
 }

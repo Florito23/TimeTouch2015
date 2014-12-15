@@ -1,4 +1,4 @@
-package timetouch.view
+package view
 {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -18,11 +18,11 @@ package timetouch.view
 	import utils.graphic.TextButtonSimple;
 	import utils.graphic.TextButtonSimpleEvent;
 	
-	[Event(name="pausePressed", type="timetouch.view.TimeControlViewEvent")]
-	[Event(name="playPressed", type="timetouch.view.TimeControlViewEvent")]
+	[Event(name="pausePressed", type="view.TimeControlViewEvent")]
+	[Event(name="playPressed", type="view.TimeControlViewEvent")]
 	
-	[Event(name="ffdPressing", type="timetouch.view.TimeControlViewEvent")]
-	[Event(name="rewPressing", type="timetouch.view.TimeControlViewEvent")]
+	[Event(name="ffdPressing", type="view.TimeControlViewEvent")]
+	[Event(name="rewPressing", type="view.TimeControlViewEvent")]
 	
 	public class TimeControlView extends MovieClip
 	{

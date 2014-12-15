@@ -1,4 +1,4 @@
-package timetouch.view
+package view
 {
 	import flash.display.Sprite;
 	

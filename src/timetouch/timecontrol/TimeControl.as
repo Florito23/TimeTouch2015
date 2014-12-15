@@ -1,5 +1,6 @@
 package timetouch.timecontrol
 {
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
 	[Event(name="updateTime", type="timetouch.timecontrol.TimeControlEvent")]
@@ -7,6 +8,13 @@ package timetouch.timecontrol
 	[Event(name="timeStarted", type="timetouch.timecontrol.TimeControlEvent")]
 	public class TimeControl extends EventDispatcher
 	{
+		
+		public static const INTERNAL_CLOCK:String = "internalClock";
+		/**
+		 * If using external clock, make sure you call updateTime() to update the time and dispatch the update time event.
+		 */
+		public static const EXTERNAL_CLOCK:String = "externalClock";
+		
 		public function get playing():Boolean { 
 			return _playing; 
 		}
@@ -24,9 +32,14 @@ package timetouch.timecontrol
 		}
 		protected var _lastTimeMilliseconds:Number = 0;
 		
-		function TimeControl()
+		function TimeControl(clockMode:String)
 		{
 			super();
+		}
+		
+		public function updateTime(event:Event=null):void
+		{
+			
 		}
 		
 		/**

@@ -1,8 +1,8 @@
-package timetouch.view
+package timetouch.surface
 {
 	import flash.events.Event;
 	
-	public class DrawingViewEvent extends Event
+	public class DrawingSurfaceEvent extends Event
 	{
 		
 		public static const DRAWING_BEGIN:String = "drawingBegin";
@@ -13,7 +13,7 @@ package timetouch.view
 		public var localX:Number;
 		public var localY:Number;
 		
-		public function DrawingViewEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		public function DrawingSurfaceEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);
 		}
