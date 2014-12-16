@@ -7,7 +7,7 @@ package timetouch.linestorage
 		
 		public var timeMilliseconds:Number;
 		
-		public function PointVO(timeMilliseconds:Number=0,x:Number=0, y:Number=0)
+		public function PointVO(x:Number, y:Number, timeMilliseconds:Number)
 		{
 			super(x, y);
 			this.timeMilliseconds = timeMilliseconds;

@@ -19,8 +19,8 @@ package timetouch.surface
 		{
 			var e:DrawingSurfaceEvent = new DrawingSurfaceEvent(drawingSurfaceEventType);
 			e.touchID = touchID;
-			e.localX = localX;
-			e.localY = localY;
+			e.x = localX;
+			e.y = localY;
 			dispatchEvent(e);
 		}
 	}

@@ -4,6 +4,8 @@ package timetouch
 	
 	import logger.print;
 	
+	import timetouch.linestorage.LineStorage;
+	import timetouch.linestorage.LineVO;
 	import timetouch.surface.DrawingSurface;
 	import timetouch.surface.DrawingSurfaceEvent;
 	import timetouch.timecontrol.TimeControl;
@@ -15,9 +17,15 @@ package timetouch
 		private var _timeControl:TimeControl;
 		private var _drawingSurface:DrawingSurface;
 		
+		private var _storage:LineStorage;
+		private var _creatingLines:LineStorage;		
+
 		public function TimeTouch()
 		{
 			super();
+			
+			_storage = new LineStorage();
+			_creatingLines = new LineStorage();
 		}
 		
 		public function set timeControl(v:TimeControl):void
@@ -55,14 +63,25 @@ package timetouch
 			_drawingSurface.addEventListener(DrawingSurfaceEvent.DRAWING_END, onDrawEnd);
 		}
 		
+		
+		
 		protected function onDrawBegin(e:DrawingSurfaceEvent):void {
-			print(this, "onDrawBegin()", e.touchID, e.localX, e.localY);
+			
+			print(this, "onDrawBegin()", e.touchID, e.x, e.y);
+			var time:Number = _timeControl.currentTimeMilliseconds;
+			_creatingLines.startLineByID(e.touchID, e.x, e.y, time);
 		}
+		
 		protected function onDrawMove(e:DrawingSurfaceEvent):void {
-			print(this, "onDrawMove()", e.touchID, e.localX, e.localY);
+			print(this, "onDrawMove()", e.touchID, e.x, e.y);
+			var time:Number = _timeControl.currentTimeMilliseconds;
+			_creatingLines.continueLineByID(e.touchID, e.x, e.y, time);
 		}
 		protected function onDrawEnd(e:DrawingSurfaceEvent):void {
-			print(this, "onDrawEnd()", e.touchID, e.localX, e.localY);
+			print(this, "onDrawEnd()", e.touchID, e.x, e.y);
+			var time:Number = _timeControl.currentTimeMilliseconds;
+			var line:LineVO = _creatingLines.finishLineByID(e.touchID, e.x, e.y, time);
+			_storage.addLine(line);
 		}
 		
 	}

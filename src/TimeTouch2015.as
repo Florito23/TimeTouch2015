@@ -29,7 +29,6 @@ package
 		*/
 		
 		private var _timeControlView:TimeControlView;
-		//private var _drawingView:DrawingView;
 		
 		
 		public function TimeTouch2015()

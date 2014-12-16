@@ -10,8 +10,8 @@ package timetouch.surface
 		public static const DRAWING_END:String = "drawingEnd";
 		
 		public var touchID:int;
-		public var localX:Number;
-		public var localY:Number;
+		public var x:Number;
+		public var y:Number;
 		
 		public function DrawingSurfaceEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
