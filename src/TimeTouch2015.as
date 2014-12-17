@@ -11,11 +11,12 @@ package
 	import logger.print;
 	
 	import timetouch.TimeTouch;
-	import timetouch.timecontrol.FreeTimeControl;
+	import timetouch.surface.DrawingSurfaceEvent;
+	import timetouch.timecontrol.DefaultTimeControl;
 	import timetouch.timecontrol.TimeControl;
 	import timetouch.timecontrol.TimeControlEvent;
+	
 	import view.DrawingView;
-	import timetouch.surface.DrawingSurfaceEvent;
 	import view.TimeControlView;
 	import view.TimeControlViewEvent;
 	
@@ -36,6 +37,7 @@ package
 			super();
 			
 			disableTraceForClass(TimeControlView);
+			disableTraceForClass(TimeTouch);
 			
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
 		}
@@ -54,7 +56,7 @@ package
 		private function initEngine():void
 		{
 			engine = new TimeTouch();
-			engine.timeControl = new FreeTimeControl(TimeControl.EXTERNAL_CLOCK);
+			//engine.timeControl = new DefaultTimeControl(TimeControl.EXTERNAL_CLOCK);
 			
 		}
 						
@@ -124,8 +126,12 @@ package
 			_timeControlView.addEventListener(TimeControlViewEvent.FFD_PRESSING, onFFD);
 			_timeControlView.addEventListener(TimeControlViewEvent.REW_PRESSING, onREW);
 			
-			// enter frame
 			addEventListener(Event.ENTER_FRAME, onFrame);
+		}
+		
+		protected function onFrame(event:Event):void
+		{
+			engine.render();
 		}
 		
 		protected function onUpdateTime(event:TimeControlEvent):void
@@ -161,11 +167,6 @@ package
 		
 		
 		
-		
-		protected function onFrame(event:Event):void
-		{
-			engine.timeControl.updateTime();
-		}
 		
 		
 		

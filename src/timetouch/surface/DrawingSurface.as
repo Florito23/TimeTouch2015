@@ -1,5 +1,6 @@
 package timetouch.surface
 {
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	
 	[Event(name="drawingBegin", type="timetouch.surface.DrawingSurfaceEvent")]
@@ -12,7 +13,11 @@ package timetouch.surface
 		{
 			super();
 		}
-		
+	
+		public function getDrawingContainter():DisplayObjectContainer
+		{
+			return this;
+		}
 		
 		
 		protected function dispatchDrawingSurfaceEvent(drawingSurfaceEventType:String, touchID:int, localX:Number, localY:Number):void

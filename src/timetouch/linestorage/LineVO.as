@@ -6,25 +6,60 @@ package timetouch.linestorage
 		private var _startPoint:PointVO;
 		private var _segments:Vector.<SegmentVO>;
 		
-		public function LineVO($firstX:Number, $firstY:Number, $firstTime:Number)
+		public function LineVO($firstX:Number, $firstY:Number, $firstStartTime:Number, $firstEndTime)
 		{
 			_segments = new Vector.<SegmentVO>();
-			_startPoint = new PointVO($firstX, $firstY, $firstTime);
+			_startPoint = new PointVO($firstX, $firstY, $firstStartTime, $firstEndTime, PointVO.TYPE_CAP);
 		}
 		
-		public function addPoint(x:Number, y:Number, time:Number):void
+		public function addPoint(x:Number, y:Number, time:Number, endTime:Number):SegmentVO
 		{
-			var newPoint:PointVO = new PointVO(x, y, time);
+			
 			if (_startPoint) {
-				var firstSegment:SegmentVO = new SegmentVO(_startPoint, newPoint);
+				var secondPoint:PointVO = new PointVO(x, y, time, endTime, PointVO.TYPE_CAP);
+				var firstSegment:SegmentVO = new SegmentVO(_startPoint, secondPoint);
 				_segments.push(firstSegment);
 				_startPoint = null;
+				return firstSegment;
 			}
 			else {
+				var newPoint:PointVO = new PointVO(x, y, time, endTime, PointVO.TYPE_CAP);
 				var lastPoint:PointVO = _segments[_segments.length-1].B;
+				lastPoint.type = PointVO.TYPE_INBETWEEN;
 				var otherSegment:SegmentVO = new SegmentVO(lastPoint, newPoint);
+				_segments.push(otherSegment);
+				return otherSegment;
 			}
 		}
+		
+		public function toString():String
+		{
+			var out:String = "[LineVO ";
+			
+			if (_startPoint) {
+				out += pointToString(_startPoint);	
+			}
+			else {
+				for (var i:int=0;i<_segments.length;i++) {
+					out += pointToString(_segments[i].A);
+					out += "---";
+				}
+				out += pointToString(_segments[_segments.length-1].B);
+			}
+			
+			out += "]";
+			return out;
+		}
+		
+		private function pointToString(_startPoint:PointVO):String
+		{
+			return "("
+				+ (_startPoint.type==PointVO.TYPE_CAP ? "CAP " : "- ")
+				+ _startPoint.x.toFixed(1)
+				+ "/"
+				+ _startPoint.y.toFixed(1)
+				+ ")";
+		}		
 		
 		/**
 		 * Returns false if the segment was illegal<br>

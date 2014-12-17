@@ -1,5 +1,6 @@
 package view
 {
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -15,6 +16,7 @@ package view
 	{
 		
 		private var bg:Sprite;
+		private var draw:Sprite;
 		private var WIDTH:int;
 		private var HEIGHT:int;
 		
@@ -34,6 +36,10 @@ package view
 			bg = new CurvedBackground(0,0,WIDTH,HEIGHT);
 			addChild(bg);
 			
+			draw = new Sprite();
+			draw.mouseEnabled = false;
+			addChild(draw);
+			
 			if (Multitouch.supportsTouchEvents) {
 				//TODO TOUCH
 				/*bg.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
@@ -47,6 +53,16 @@ package view
 			}
 			
 		}
+		
+		
+		override public function getDrawingContainter():DisplayObjectContainer
+		{
+			return draw;
+		}
+		
+		
+		
+		
 		
 		private var _mouseDragging:Boolean = false;
 		

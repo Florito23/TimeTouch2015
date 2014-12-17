@@ -12,6 +12,9 @@ package timetouch.linestorage
 		public var magnitude:Number;
 		public var normalizedAToB:Point = null;
 		
+		public var lowestTime:Number;
+		public var highestTime:Number;
+		
 		public function SegmentVO(A:PointVO,B:PointVO)
 		{
 			this.A = A;
@@ -21,6 +24,15 @@ package timetouch.linestorage
 			if (magnitude>0) {
 				normalizedAToB = new Point(AToB.x/magnitude, AToB.y/magnitude);
 			}
+			
+			var a0:Number = A.startTime;
+			var a1:Number = A.endTime;
+			var b0:Number = B.startTime;
+			var b1:Number = B.endTime;
+			
+			lowestTime = Math.min(a0,a1,b0,b1);
+			highestTime = Math.max(a0, a1, b0, b1);
+			
 		}
 	}
 }

@@ -1,8 +1,9 @@
 package timetouch.linestorage
 {
+	import logger.print;
+
 	public class LineStorage
 	{
-		
 		
 		public function get linesByID():Object
 		{
@@ -15,18 +16,44 @@ package timetouch.linestorage
 		}
 		private var _lines:Vector.<LineVO>;
 		
+		private var _allSegments:Vector.<SegmentVO>;
+		
 		public function LineStorage()
 		{
 			_linesById = new Object();
 			_lines = new Vector.<LineVO>();
+			_allSegments = new Vector.<SegmentVO>();
 		}
 		
 		
-		public function startLineByID($touchID:int, $firstX:Number, $firstY:Number, $firstTime:Number):void
+		public function startLineByID($touchID:int, $firstX:Number, $firstY:Number, $firstTime:Number, $firstEndTime:Number):void
 		{
-			var line:LineVO = new LineVO($firstX, $firstY, $firstTime);
+			var line:LineVO = new LineVO($firstX, $firstY, $firstTime, $firstEndTime);
 			_linesById["t"+$touchID] = line;
 		}
+		
+		public function continueLineByID(touchID:int, x:Number, y:Number, time:Number, endTime:Number):void
+		{
+			var line:LineVO = getLineByID(touchID, false);
+			if (line) {
+				_lines.push(line);
+				_allSegments.push( line.addPoint(x,y,time, endTime) );
+			}
+		}
+		
+		public function finishAndStoreLineByID(touchID:int, x:Number, y:Number, time:Number, endTime:Number):void
+		{
+			var line:LineVO = getLineByID(touchID, true);
+			if (line) {
+				_allSegments.push( line.addPoint(x,y,time,endTime) );
+				
+				//return line;
+			}/* else {
+				return null;
+			}*/
+			
+		}
+		
 		
 		private function getLineByID(touchID:int, deleteFromObject:Boolean):LineVO
 		{
@@ -42,29 +69,32 @@ package timetouch.linestorage
 			}
 		}
 		
-		public function continueLineByID(touchID:int, x:Number, y:Number, time:Number):void
-		{
-			var line:LineVO = getLineByID(touchID, false);
-			if (line) {
-				line.addPoint(x,y,time);
-			}
-		}
 		
-		public function finishLineByID(touchID:int, x:Number, y:Number, time:Number):LineVO
-		{
-			var line:LineVO = getLineByID(touchID, true);
-			if (line) {
-				line.addPoint(x,y,time);
-				return line;
-			} else {
-				return null;
+		
+		
+		
+		
+		
+		public function getSegmentsAtTime(ti:Number):Vector.<SegmentVO> {
+			
+			//TODO: optimisation possible
+			var out:Vector.<SegmentVO> = new Vector.<SegmentVO>();
+			
+			for each (var seg:SegmentVO in _allSegments) {
+				
+				if (ti>=seg.lowestTime && ti<seg.highestTime) {
+					out.push(seg);
+				}
+				
 			}
+			
+			return out;
 			
 		}
 		
-		public function addLine(line:LineVO):void
+		/*private function addLine(line:LineVO):void
 		{
 			_lines.push(line);
-		}
+		}*/
 	}
 }

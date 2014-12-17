@@ -4,7 +4,7 @@ package timetouch.timecontrol
 	import flash.events.Event;
 	import flash.utils.getTimer;
 
-	public class FreeTimeControl extends TimeControl
+	public class DefaultTimeControl extends TimeControl
 	{
 	
 		//TODO: Change into _systemTimeAtLastPlayOrLoop (for more accuracy)
@@ -12,7 +12,7 @@ package timetouch.timecontrol
 		
 		private var _timerMc:MovieClip;
 		
-		public function FreeTimeControl(clockMode:String)
+		public function DefaultTimeControl(clockMode:String)
 		{
 			super(clockMode);
 			_currentTimeMilliseconds = 0;
