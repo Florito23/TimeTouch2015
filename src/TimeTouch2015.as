@@ -11,8 +11,7 @@ package
 	import logger.print;
 	
 	import timetouch.TimeTouch;
-	import timetouch.surface.DrawingSurfaceEvent;
-	import timetouch.timecontrol.DefaultTimeControl;
+	import timetouch.linestorage.LineStorage;
 	import timetouch.timecontrol.TimeControl;
 	import timetouch.timecontrol.TimeControlEvent;
 	
@@ -38,6 +37,7 @@ package
 			
 			disableTraceForClass(TimeControlView);
 			disableTraceForClass(TimeTouch);
+			disableTraceForClass(LineStorage);
 			
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
 		}

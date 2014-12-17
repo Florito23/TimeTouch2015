@@ -4,6 +4,7 @@ package timetouch.renderer
 	import flash.display.Sprite;
 	
 	import timetouch.linestorage.LineStorage;
+	import timetouch.linestorage.PointVO;
 	import timetouch.linestorage.SegmentVO;
 	import timetouch.surface.DrawingSurface;
 
@@ -25,9 +26,18 @@ package timetouch.renderer
 				
 				var spr:Sprite = new Sprite();
 				spr.mouseEnabled = false;
-				spr.graphics.lineStyle(3,0x880000);
+				spr.graphics.lineStyle(2,0x880000);
 				spr.graphics.moveTo(seg.A.x, seg.A.y);
 				spr.graphics.lineTo(seg.B.x, seg.B.y);
+				
+				if (seg.A.type == PointVO.TYPE_CAP) {
+					spr.graphics.beginFill(0x008800);
+					spr.graphics.drawRect(seg.A.x-2, seg.A.y-2, 4, 4);
+				}
+				if (seg.B.type == PointVO.TYPE_CAP) {
+					spr.graphics.beginFill(0x008800);
+					spr.graphics.drawRect(seg.B.x-2, seg.B.y-2, 4, 4);
+				}
 				
 				dsp.addChild(spr);
 				

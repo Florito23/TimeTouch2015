@@ -29,8 +29,12 @@ package timetouch.timecontrol
 			var ti:Number = getTimer();
 			if (_playing) {
 				var dt:Number = ti - _systemTimeAtLastSetCurrentTime;
+				var newTime:Number = _currentTimeMilliseconds + dt;
 				//print(this, "onFrame()", "playing", dt);
-				setCurrentTimeMilliseconds(_currentTimeMilliseconds + dt);
+				if (newTime>10000) {
+					newTime = 0;
+				}
+				setCurrentTimeMilliseconds(newTime);
 			} else {
 				_systemTimeAtLastSetCurrentTime = ti;
 			}

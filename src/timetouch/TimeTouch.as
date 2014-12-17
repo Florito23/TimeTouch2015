@@ -41,10 +41,10 @@ package timetouch
 		{
 			if (_timeControl) {
 				_timeControl.pause();
-				//_timeControl.removeEventListener(TimeControlEvent.UPDATE_TIME, onUpdateTime);
+				_timeControl.removeEventListener(TimeControlEvent.UPDATE_TIME, onUpdateTime);
 			}
 			_timeControl = v;
-			//_timeControl.addEventListener(TimeControlEvent.UPDATE_TIME, onUpdateTime);
+			_timeControl.addEventListener(TimeControlEvent.UPDATE_TIME, onUpdateTime);
 		}
 		
 		public function get timeControl():TimeControl {
@@ -56,17 +56,21 @@ package timetouch
 			_renderer.render(_storage, _timeControl.currentTimeMilliseconds, _drawingSurface);
 		}
 		
-		/*protected function onUpdateTime(event:TimeControlEvent):void
+		protected function onUpdateTime(event:TimeControlEvent):void
 		{
 			//trace("onUpdateTime()",(event.target as TimeControl).currentTimeMilliseconds);
 			//TODO:
-		}*/
+			var past:Number = _timeControl.lastTimeMilliseconds;
+			var current:Number = _timeControl.currentTimeMilliseconds;
+			if (past>current) {
+				finishAndRestartCurrentLines();
+			}
+		}
 		
 		
 		
 		public function set drawingSurface(s:DrawingSurface):void
 		{
-			trace(this, "set drawingSurface()", s);
 			if (_drawingSurface) {
 				_drawingSurface.removeEventListener(DrawingSurfaceEvent.DRAWING_BEGIN, onDrawBegin);
 				_drawingSurface.removeEventListener(DrawingSurfaceEvent.DRAWING_MOVE, onDrawMove);
@@ -83,20 +87,52 @@ package timetouch
 		protected function onDrawBegin(e:DrawingSurfaceEvent):void {
 			
 			print(this, "onDrawBegin()", e.touchID, e.x, e.y);
+			
+			var lastTime:Number = _timeControl.lastTimeMilliseconds;
 			var time:Number = _timeControl.currentTimeMilliseconds;
+			
 			_storage.startLineByID(e.touchID, e.x, e.y, time, time+3000);
 		}
 		
 		protected function onDrawMove(e:DrawingSurfaceEvent):void {
 			print(this, "onDrawMove()", e.touchID, e.x, e.y);
+			
+			var lastTime:Number = _timeControl.lastTimeMilliseconds;
 			var time:Number = _timeControl.currentTimeMilliseconds;
-			_storage.continueLineByID(e.touchID, e.x, e.y, time, time+3000);
+			
+			// pause or playing forward
+			//if (lastTime<=time) {
+				_storage.continueLineByID(e.touchID, e.x, e.y, time, time+3000);	
+			//}
+			// rewind or loop point: stop line, start new one
+			/*else {
+				_storage.finishAndStoreLineByID(e.touchID);
+				_storage.startLineByID(e.touchID, e.x, e.y, time, time+3000);
+			}*/
+			
+			
 		}
+		
+		protected function finishAndRestartCurrentLines():void
+		{
+			var time:Number = _timeControl.currentTimeMilliseconds;
+			_storage.finishAndRestartCurrentLines(time, time+3000);
+		}
+		
 		protected function onDrawEnd(e:DrawingSurfaceEvent):void {
 			print(this, "onDrawEnd()", e.touchID, e.x, e.y);
+			
+			var lastTime:Number = _timeControl.lastTimeMilliseconds;
 			var time:Number = _timeControl.currentTimeMilliseconds;
-			_storage.finishAndStoreLineByID(e.touchID, e.x, e.y, time, time+3000);
-			//_storage.addLine(line);
+			// pause or playing forward
+			//if (lastTime<=time) {
+				_storage.continueAndFinishLineByID(e.touchID, e.x, e.y, time, time+3000);
+			//}
+			// rewind or loop point: stop line
+			/*else {
+				_storage.finishAndStoreLineByID(e.touchID);
+				//_storage.startLineByID(e.touchID, e.x, e.y, time, time+3000);
+			}*/
 		}
 		
 	}

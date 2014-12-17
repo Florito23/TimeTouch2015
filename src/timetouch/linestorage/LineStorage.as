@@ -28,7 +28,9 @@ package timetouch.linestorage
 		
 		public function startLineByID($touchID:int, $firstX:Number, $firstY:Number, $firstTime:Number, $firstEndTime:Number):void
 		{
+			
 			var line:LineVO = new LineVO($firstX, $firstY, $firstTime, $firstEndTime);
+			print(this, "startLineByID",$touchID,line.length);
 			_linesById["t"+$touchID] = line;
 		}
 		
@@ -38,20 +40,37 @@ package timetouch.linestorage
 			if (line) {
 				_lines.push(line);
 				_allSegments.push( line.addPoint(x,y,time, endTime) );
+				print(this, "continueLineByID",touchID,line.length);
 			}
 		}
 		
-		public function finishAndStoreLineByID(touchID:int, x:Number, y:Number, time:Number, endTime:Number):void
+		public function continueAndFinishLineByID(touchID:int, x:Number, y:Number, time:Number, endTime:Number):void
 		{
 			var line:LineVO = getLineByID(touchID, true);
 			if (line) {
 				_allSegments.push( line.addPoint(x,y,time,endTime) );
+				print(this, "continueAndFinishLineByID",touchID,line.length);
+			}
+		}
+		
+		/*public function finishAndStoreLineByID(touchID:int):void
+		{
+			var line:LineVO = getLineByID(touchID, true);
+			if (line) {
+				print("finishAndStorLine",touchID,line.length);
+				line.finishLastPoint();
+			}
+		}*/
+		
+		public function finishAndRestartCurrentLines(startTime:Number, endTime:Number):void
+		{
+			for (var key:String in _linesById) {
+				var line:LineVO = _linesById[key] as LineVO;
+				var p:PointVO = line.finishLastPoint();
 				
-				//return line;
-			}/* else {
-				return null;
-			}*/
-			
+				line = new LineVO(p.x, p.y, startTime, endTime);
+				_linesById[key] = line;
+			}
 		}
 		
 		
@@ -96,5 +115,7 @@ package timetouch.linestorage
 		{
 			_lines.push(line);
 		}*/
+		
+		
 	}
 }

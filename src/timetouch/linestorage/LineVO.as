@@ -12,6 +12,11 @@ package timetouch.linestorage
 			_startPoint = new PointVO($firstX, $firstY, $firstStartTime, $firstEndTime, PointVO.TYPE_CAP);
 		}
 		
+		public function get length():int
+		{
+			return _segments.length;
+		}
+		
 		public function addPoint(x:Number, y:Number, time:Number, endTime:Number):SegmentVO
 		{
 			
@@ -30,6 +35,13 @@ package timetouch.linestorage
 				_segments.push(otherSegment);
 				return otherSegment;
 			}
+		}
+		
+		public function finishLastPoint():PointVO
+		{
+			var p:PointVO = _segments[_segments.length-1].B;
+			p.type = PointVO.TYPE_CAP;
+			return p;
 		}
 		
 		public function toString():String
@@ -85,6 +97,7 @@ package timetouch.linestorage
 			
 			return add;
 		}*/
+		
 		
 	}
 }
