@@ -1,7 +1,6 @@
 package view
 {
 	import flash.display.MovieClip;
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TouchEvent;
@@ -12,8 +11,6 @@ package view
 	
 	import logger.print;
 	
-	import timetouch.timecontrol.TimeControlEvent;
-	
 	import utils.graphic.TextButton;
 	import utils.graphic.TextButtonSimple;
 	import utils.graphic.TextButtonSimpleEvent;
@@ -23,6 +20,9 @@ package view
 	
 	[Event(name="ffdPressing", type="view.TimeControlViewEvent")]
 	[Event(name="rewPressing", type="view.TimeControlViewEvent")]
+	
+	[Event(name="loopOnPressed", type="view.TimeControlViewEvent")]
+	[Event(name="loopOffPressed", type="view.TimeControlViewEvent")]
 	
 	public class TimeControlView extends MovieClip
 	{
@@ -35,6 +35,9 @@ package view
 		
 		private var _revPressing:Boolean = false;
 		private var _ffdPressing:Boolean = false;
+		
+		private var _loopOnButton:TextButtonSimple;
+		private var _loopOffButton:TextButtonSimple;
 		
 		public function TimeControlView()
 		{
@@ -108,7 +111,18 @@ package view
 			addChild(_timeField);
 			
 			
-			var bg:CurvedBackground = new CurvedBackground(0,0,_timeField.getBounds(this).right+5, _ffdButton.getBounds(this).bottom+5);
+			
+			
+			_loopOffButton = new TextButtonSimple("LOOP OFF", 50, 15, _timeField.getBounds(this).right + 10, 5);
+			_loopOffButton.addEventListener(TextButtonSimpleEvent.BUTTON_TRIGGERED, onLoopOffButton);
+			addChild(_loopOffButton);
+			
+			_loopOnButton = new TextButtonSimple("LOOP ON", 50, 15, _timeField.getBounds(this).right + 10, 5);
+			_loopOnButton.addEventListener(TextButtonSimpleEvent.BUTTON_TRIGGERED, onLoopOnButton);
+			_loopOnButton.visible = false;
+			addChild(_loopOnButton);
+			
+			var bg:CurvedBackground = new CurvedBackground(0,0,_loopOnButton.getBounds(this).right+5, _ffdButton.getBounds(this).bottom+5);
 			addChildAt(bg, 0);
 			
 			
@@ -162,6 +176,20 @@ package view
 			_timeField.text = "Time = "+minutes+":"+ss+"."+mm;
 		}
 		
+		
+		private function onLoopOnButton(e:Event):void
+		{
+			_loopOnButton.visible = false;
+			_loopOffButton.visible = true;
+			dispatchEvent(new TimeControlViewEvent(TimeControlViewEvent.LOOP_ON_PRESSED));
+		}
+		
+		private function onLoopOffButton(e:Event):void
+		{
+			_loopOnButton.visible = true;
+			_loopOffButton.visible = false;
+			dispatchEvent(new TimeControlViewEvent(TimeControlViewEvent.LOOP_OFF_PRESSED));
+		}
 		
 		private function onFrame(e:Event):void
 		{

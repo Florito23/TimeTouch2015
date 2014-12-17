@@ -9,6 +9,9 @@ package timetouch.timecontrol
 	public class TimeControl extends EventDispatcher
 	{
 		
+		/**
+		 * If using internal clock, make sure you have something that triggers it
+		 */
 		public static const INTERNAL_CLOCK:String = "internalClock";
 		/**
 		 * If using external clock, make sure you call updateTime() to update the time and dispatch the update time event.
@@ -32,10 +35,52 @@ package timetouch.timecontrol
 		}
 		protected var _lastTimeMilliseconds:Number = 0;
 		
+		private var _loop:Boolean = false;
+		public function set loop(v:Boolean):void {
+			this._loop = v;	
+		}
+		public function get loop():Boolean {
+			return _loop;
+		}
+		
+		
+		private var _loopIn:Number = 0;
+
+		public function get loopIn():Number
+		{
+			return _loopIn;
+		}
+
+		public function set loopIn(value:Number):void
+		{
+			if (value < loopOut) {
+				_loopIn = value;
+			}
+		}
+
+		private var _loopOut:Number = 10000;
+
+		public function get loopOut():Number
+		{
+			return _loopOut;
+		}
+
+		public function set loopOut(value:Number):void
+		{
+			if (value > loopIn) {
+				_loopOut = value;
+			}
+		}
+
+		
+		
 		function TimeControl(clockMode:String)
 		{
 			super();
 		}
+		
+		
+		
 		
 		public function updateTime(event:Event=null):void
 		{

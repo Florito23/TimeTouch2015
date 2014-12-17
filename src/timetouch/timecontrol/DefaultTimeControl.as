@@ -3,6 +3,8 @@ package timetouch.timecontrol
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.utils.getTimer;
+	
+	import logger.print;
 
 	public class DefaultTimeControl extends TimeControl
 	{
@@ -12,9 +14,31 @@ package timetouch.timecontrol
 		
 		private var _timerMc:MovieClip;
 		
+		override public function set loop(v:Boolean):void
+		{
+			//print(this, "set loop()", v);
+			super.loop = v;
+			if (v) {
+				if (_currentTimeMilliseconds<loopIn || _currentTimeMilliseconds>=loopOut) {
+					setCurrentTimeMilliseconds(loopIn);
+				}
+				//print("\t->",loop);
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		public function DefaultTimeControl(clockMode:String)
 		{
 			super(clockMode);
+			loopIn = 0;
+			loopOut = 3000;
 			_currentTimeMilliseconds = 0;
 			_lastTimeMilliseconds = 0;
 			_systemTimeAtLastSetCurrentTime = getTimer();
@@ -30,9 +54,8 @@ package timetouch.timecontrol
 			if (_playing) {
 				var dt:Number = ti - _systemTimeAtLastSetCurrentTime;
 				var newTime:Number = _currentTimeMilliseconds + dt;
-				//print(this, "onFrame()", "playing", dt);
-				if (newTime>10000) {
-					newTime = 0;
+				if (loop && newTime > loopOut) {
+					newTime = loopIn
 				}
 				setCurrentTimeMilliseconds(newTime);
 			} else {

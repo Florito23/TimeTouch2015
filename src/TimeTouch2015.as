@@ -126,6 +126,10 @@ package
 			_timeControlView.addEventListener(TimeControlViewEvent.FFD_PRESSING, onFFD);
 			_timeControlView.addEventListener(TimeControlViewEvent.REW_PRESSING, onREW);
 			
+			// time control loop
+			_timeControlView.addEventListener(TimeControlViewEvent.LOOP_OFF_PRESSED, onLoopOff);
+			_timeControlView.addEventListener(TimeControlViewEvent.LOOP_ON_PRESSED, onLoopOn);
+			
 			addEventListener(Event.ENTER_FRAME, onFrame);
 		}
 		
@@ -163,7 +167,15 @@ package
 			engine.timeControl.setCurrentTimeMilliseconds(newTime);
 		}
 		
+		protected function onLoopOff(event:TimeControlViewEvent):void
+		{
+			engine.timeControl.loop = true;
+		}
 		
+		protected function onLoopOn(event:TimeControlViewEvent):void
+		{
+			engine.timeControl.loop = false;
+		}
 		
 		
 		
