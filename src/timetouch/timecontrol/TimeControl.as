@@ -35,6 +35,14 @@ package timetouch.timecontrol
 		}
 		protected var _lastTimeMilliseconds:Number = 0;
 		
+		public function set maxTimeMilliseconds(value:Number):void {
+			_maxTimeMilliseconds = Math.max(loopOut, value);
+		}
+		public function get maxTimeMilliseconds():Number {
+			return _maxTimeMilliseconds;
+		}
+		private var _maxTimeMilliseconds:Number = Number.MAX_VALUE;
+		
 		private var _loop:Boolean = false;
 		public function set loop(v:Boolean):void {
 			this._loop = v;	
@@ -54,7 +62,7 @@ package timetouch.timecontrol
 		public function set loopIn(value:Number):void
 		{
 			if (value < loopOut) {
-				_loopIn = value;
+				_loopIn = Math.max(0,value);
 			}
 		}
 
@@ -68,7 +76,7 @@ package timetouch.timecontrol
 		public function set loopOut(value:Number):void
 		{
 			if (value > loopIn) {
-				_loopOut = value;
+				_loopOut = Math.min(value, maxTimeMilliseconds);
 			}
 		}
 

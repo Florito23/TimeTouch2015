@@ -51,7 +51,7 @@ package timetouch.timecontrol
 		override public function updateTime(event:Event = null):void
 		{
 			var ti:Number = getTimer();
-			if (_playing) {
+			if (playing) {
 				var dt:Number = ti - _systemTimeAtLastSetCurrentTime;
 				var newTime:Number = _currentTimeMilliseconds + dt;
 				if (loop && newTime > loopOut) {

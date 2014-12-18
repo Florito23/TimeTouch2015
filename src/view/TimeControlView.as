@@ -4,6 +4,7 @@ package view
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TouchEvent;
+	import flash.geom.Point;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
@@ -14,6 +15,7 @@ package view
 	import utils.graphic.TextButton;
 	import utils.graphic.TextButtonSimple;
 	import utils.graphic.TextButtonSimpleEvent;
+	import utils.math.timeFormat;
 	
 	[Event(name="pausePressed", type="view.TimeControlViewEvent")]
 	[Event(name="playPressed", type="view.TimeControlViewEvent")]
@@ -24,6 +26,10 @@ package view
 	[Event(name="loopOnPressed", type="view.TimeControlViewEvent")]
 	[Event(name="loopOffPressed", type="view.TimeControlViewEvent")]
 	
+	[Event(name="inpointMoved", type="view.TimeControlViewEvent")]
+	[Event(name="outpointMoved", type="view.TimeControlViewEvent")]
+	
+	
 	public class TimeControlView extends MovieClip
 	{
 		
@@ -33,11 +39,11 @@ package view
 		private var _ffdButton:TextButtonSimple;
 		private var _timeField:TextField;
 		
-		private var _revPressing:Boolean = false;
-		private var _ffdPressing:Boolean = false;
-		
 		private var _loopOnButton:TextButtonSimple;
 		private var _loopOffButton:TextButtonSimple;
+		
+		private var _inPointButton:TextButtonSimple;
+		private var _outPointButton:TextButtonSimple;
 		
 		public function TimeControlView()
 		{
@@ -72,27 +78,17 @@ package view
 			
 			
 			_revButton = new TextButtonSimple("<<<",25,15,_playButton.getBounds(this).right+5,5);
-			if (Multitouch.supportsTouchEvents) {
-				_revButton.addEventListener(TouchEvent.TOUCH_BEGIN, onRevBegin);
-				_revButton.addEventListener(TouchEvent.TOUCH_END, onRevEnd);
-				_revButton.addEventListener(TouchEvent.TOUCH_OUT, onRevEnd);
-			} else {
-				_revButton.addEventListener(MouseEvent.MOUSE_DOWN, onRevBegin);
-				stage.addEventListener(MouseEvent.MOUSE_UP, onRevEnd);
-			}
+			_revButton.addEventListener(TextButtonSimpleEvent.BUTTON_PRESSING, function(e:Event):void {
+				dispatchEvent(new TimeControlViewEvent(TimeControlViewEvent.REW_PRESSING));
+			});
 			addChild(_revButton);
 			
 			
 			
 			_ffdButton = new TextButtonSimple(">>>",25,15,_revButton.getBounds(this).right+5,5);
-			if (Multitouch.supportsTouchEvents) {
-				_ffdButton.addEventListener(TouchEvent.TOUCH_BEGIN, onFfdBegin);
-				_ffdButton.addEventListener(TouchEvent.TOUCH_END, onFfdEnd);
-				_ffdButton.addEventListener(TouchEvent.TOUCH_OUT, onFfdEnd);
-			} else {
-				_ffdButton.addEventListener(MouseEvent.MOUSE_DOWN, onFfdBegin);
-				stage.addEventListener(MouseEvent.MOUSE_UP, onFfdEnd);
-			}
+			_ffdButton.addEventListener(TextButtonSimpleEvent.BUTTON_PRESSING, function(e:Event):void {
+				dispatchEvent(new TimeControlViewEvent(TimeControlViewEvent.FFD_PRESSING));
+			});
 			addChild(_ffdButton);
 			
 			
@@ -122,11 +118,20 @@ package view
 			_loopOnButton.visible = false;
 			addChild(_loopOnButton);
 			
-			var bg:CurvedBackground = new CurvedBackground(0,0,_loopOnButton.getBounds(this).right+5, _ffdButton.getBounds(this).bottom+5);
+			_inPointButton = new TextButtonSimple("IN: ", 60,15,_loopOnButton.getBounds(this).right + 5, 5);
+			_inPointButton.addEventListener(TextButtonSimpleEvent.BUTTON_DRAGGING, onInPointPressing);
+			addChild(_inPointButton);
+			
+			_outPointButton = new TextButtonSimple("OUT: ", 60,15,_inPointButton.getBounds(this).right + 5, 5);
+			_outPointButton.addEventListener(TextButtonSimpleEvent.BUTTON_DRAGGING, onOutPointPressing);
+			addChild(_outPointButton);
+			
+			//setLoopInButton(0);
+			//setLoopOutButton(5000);
+			
+			var bg:CurvedBackground = new CurvedBackground(0,0,_outPointButton.getBounds(this).right+5, _ffdButton.getBounds(this).bottom+5);
 			addChildAt(bg, 0);
 			
-			
-			addEventListener(Event.ENTER_FRAME, onFrame);
 		}
 		
 		
@@ -144,23 +149,6 @@ package view
 			_pauseButton.visible = false;
 			_playButton.visible = true;
 			dispatchEvent(new TimeControlViewEvent(TimeControlViewEvent.PAUSE_PRESSED));
-		}
-		
-		protected function onRevBegin(e:Event):void
-		{
-			_revPressing = true;
-		}
-		protected function onRevEnd(e:Event):void
-		{
-			_revPressing = false;
-		}
-		protected function onFfdBegin(e:Event):void
-		{
-			_ffdPressing = true;
-		}
-		protected function onFfdEnd(e:Event):void
-		{
-			_ffdPressing = false;
 		}
 		
 		
@@ -191,16 +179,35 @@ package view
 			dispatchEvent(new TimeControlViewEvent(TimeControlViewEvent.LOOP_OFF_PRESSED));
 		}
 		
-		private function onFrame(e:Event):void
+		
+		protected function onInPointPressing(event:TextButtonSimpleEvent):void
 		{
-			if (_revPressing) {
-				print(this, "onFrame()", "revPressing");
-				dispatchEvent(new TimeControlViewEvent(TimeControlViewEvent.REW_PRESSING));
-			}
-			if (_ffdPressing) {
-				print(this, "onFrame()", "ffdPressing");
-				dispatchEvent(new TimeControlViewEvent(TimeControlViewEvent.FFD_PRESSING));
-			}
+			var tb:TextButtonSimple = event.target as TextButtonSimple;
+			var e:TimeControlViewEvent = new TimeControlViewEvent(TimeControlViewEvent.INPOINT_MOVED);
+			e.deltaTime = tb.moved.x;// * 0.5;
+			dispatchEvent(e);
+		}		
+		
+		public function setLoopInButton(loopIn:Number):void
+		{
+			var txt:String = "IN: "+timeFormat(loopIn);
+			_inPointButton.text = txt;
 		}
+		
+		protected function onOutPointPressing(event:TextButtonSimpleEvent):void
+		{
+			var tb:TextButtonSimple = event.target as TextButtonSimple;
+			var e:TimeControlViewEvent = new TimeControlViewEvent(TimeControlViewEvent.OUTPOINT_MOVED);
+			e.deltaTime = tb.moved.x;// * 0.5;
+			dispatchEvent(e);
+		}		
+		
+		public function setLoopOutButton(loopIn:Number):void
+		{
+			var txt:String = "OUT: "+timeFormat(loopIn);
+			_outPointButton.text = txt;
+		}
+		
+		
 	}
 }

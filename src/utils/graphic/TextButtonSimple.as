@@ -4,14 +4,17 @@ package utils.graphic
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TouchEvent;
+	import flash.geom.Point;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.ui.Multitouch;
 	
-	import logger.print;
-	
 	[Event(name="buttonTriggered", type="utils.graphic.TextButtonSimpleEvent")]
+	[Event(name="buttonDragging", type="utils.graphic.TextButtonSimpleEvent")]
+	[Event(name="buttonPressing", type="utils.graphic.TextButtonSimpleEvent")]
+	
+	
 	public class TextButtonSimple extends Sprite
 	{
 		
@@ -33,6 +36,21 @@ package utils.graphic
 		private var bgTouch:Sprite;
 		private var _tf:TextField;
 		
+		//private var _triggerEvent:Event;
+		
+		public function get triggerPos():Point {
+			return _triggerPos.clone();
+		}
+		private var _triggerPos:Point = new Point();
+		
+		public function get currentPos():Point {
+			return _currentPos.clone();
+		}
+		private var _currentPos:Point = new Point();
+		
+		public function get moved():Point {
+			return new Point(_currentPos.x-_triggerPos.x, _currentPos.y-_triggerPos.y);
+		}
 		public function TextButtonSimple(text:String, w:Number=100, h:Number=20, x:Number=0, y:Number=0)
 		{
 			super();
@@ -86,7 +104,7 @@ package utils.graphic
 		}
 		
 		
-		private var _touchId:int;
+		private var _touchId:int = -1;
 		private function addTouchStartEvents():void
 		{
 			if (Multitouch.supportsTouchEvents) {
@@ -102,6 +120,22 @@ package utils.graphic
 			} else {
 				removeEventListener(MouseEvent.MOUSE_DOWN, onTouchBegin);
 			}
+		}
+		private function addTouchMoveEvents():void
+		{
+			if (Multitouch.supportsTouchEvents) {
+				stage.addEventListener(TouchEvent.TOUCH_MOVE, onTouchMove);
+			} else {
+				stage.addEventListener(MouseEvent.MOUSE_MOVE, onTouchMove);
+			}
+		}
+		private function removeTouchMoveEvents():void
+		{
+			if (Multitouch.supportsTouchEvents) {
+				stage.removeEventListener(TouchEvent.TOUCH_MOVE, onTouchMove);
+			} else {
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE, onTouchMove);
+			}	
 		}
 		private function addTouchEndEvents():void
 		{
@@ -120,31 +154,88 @@ package utils.graphic
 			}
 		}
 		
+		
 		private function onTouchBegin(e:Event):void {
-			bgNormal.visible = false;
-			bgTouch.visible = true;
-			if (e is TouchEvent) {
-				_touchId = (e as TouchEvent).touchPointID;
+			if (_touchId==-1) {
+				//_triggerEvent = e;
+				bgNormal.visible = false;
+				bgTouch.visible = true;
+				if (e is TouchEvent) {
+					var te:TouchEvent = e as TouchEvent;
+					_touchId = te.touchPointID;
+					_triggerPos = globalToLocal(new Point(te.stageX, te.stageY)) 
+				} else if (e is MouseEvent) {
+					var me:MouseEvent = e as MouseEvent;
+					_triggerPos = globalToLocal(new Point(me.stageX, me.stageY));
+					_touchId = 0;
+				} else {
+					throw new Error("Illegal source");
+				}
+				
+				removeTouchStartEvents();
+				addTouchMoveEvents();
+				addTouchEndEvents();
+				
+				if (!hasEventListener(Event.ENTER_FRAME)) {
+					addEventListener(Event.ENTER_FRAME, onFramePressing);
+				}
+				
 			}
-			removeTouchStartEvents();
-			addTouchEndEvents();
+		}
+		
+		private function onFramePressing(e:Event):void
+		{
+			dispatchEvent(new TextButtonSimpleEvent(TextButtonSimpleEvent.BUTTON_PRESSING));	
+		}
+		
+		private function onTouchMove(e:Event):void
+		{
+			if (e is TouchEvent){
+				var te:TouchEvent = e as TouchEvent;
+				_currentPos = globalToLocal(new Point(te.stageX, te.stageY));
+			} else if (e is MouseEvent) {
+				var me:MouseEvent = MouseEvent(e);
+				_currentPos = globalToLocal(new Point(me.stageX, me.stageY));
+			} else {
+				throw new Error("Illegal source");
+			}
+			dispatchEvent(new TextButtonSimpleEvent(TextButtonSimpleEvent.BUTTON_DRAGGING));
 		}
 		
 		private function onTouchEnd(e:Event):void {
-			var isTouchEnd:Boolean = true;
-			if (e is TouchEvent) {
-				var tid:int = (e as TouchEvent).touchPointID;
-				if (_touchId != tid) {
-					isTouchEnd = false;
+			if (_touchId!=-1) {
+				var isTouchEnd:Boolean = true;
+				if (e is TouchEvent) {
+					var tid:int = (e as TouchEvent).touchPointID;
+					if (_touchId != tid) {
+						isTouchEnd = false;
+					}
 				}
-			}
-			
-			if (isTouchEnd) {
-				bgNormal.visible = true;
-				bgTouch.visible = false;
-				removeTouchEndEvents();
-				addTouchStartEvents();
-				dispatchEvent(new TextButtonSimpleEvent(TextButtonSimpleEvent.BUTTON_TRIGGERED));
+				
+				if (isTouchEnd) {
+					_touchId = -1;
+					if (e is TouchEvent){
+						var te:TouchEvent = e as TouchEvent;
+						_currentPos = globalToLocal(new Point(te.stageX, te.stageY));
+					}else if (e is MouseEvent) {
+						var me:MouseEvent = e as MouseEvent;
+						_currentPos = globalToLocal(new Point(me.stageX, me.stageY));
+					} else {
+						throw new Error("Illegal source");
+					}
+					//removeEventListener(Event.ENTER_FRAME, onFrameDrag);
+					bgNormal.visible = true;
+					bgTouch.visible = false;
+					
+					addTouchStartEvents();
+					removeTouchMoveEvents();
+					removeTouchEndEvents();
+					if (hasEventListener(Event.ENTER_FRAME)) {
+						removeEventListener(Event.ENTER_FRAME, onFramePressing);
+					}
+					
+					dispatchEvent(new TextButtonSimpleEvent(TextButtonSimpleEvent.BUTTON_TRIGGERED));
+				}
 			}
 		}
 		

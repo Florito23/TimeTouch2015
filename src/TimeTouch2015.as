@@ -93,7 +93,10 @@ package
 			_timeControlView = new TimeControlView();
 			_timeControlView.x = 10;
 			_timeControlView.y = 10;
+			_timeControlView.setLoopInButton(engine.timeControl.loopIn);
+			_timeControlView.setLoopOutButton(engine.timeControl.loopOut);
 			addChild(_timeControlView);
+			
 			
 			// drawing view
 			var drawingView:DrawingView = new DrawingView(stage.stageWidth-20, stage.stageHeight-30-_timeControlView.height);
@@ -130,8 +133,13 @@ package
 			_timeControlView.addEventListener(TimeControlViewEvent.LOOP_OFF_PRESSED, onLoopOff);
 			_timeControlView.addEventListener(TimeControlViewEvent.LOOP_ON_PRESSED, onLoopOn);
 			
+			// time control inpoint
+			_timeControlView.addEventListener(TimeControlViewEvent.INPOINT_MOVED, onInpointMove);
+			_timeControlView.addEventListener(TimeControlViewEvent.OUTPOINT_MOVED, onOutpointMove);
+			
 			addEventListener(Event.ENTER_FRAME, onFrame);
 		}
+		
 		
 		protected function onFrame(event:Event):void
 		{
@@ -178,6 +186,17 @@ package
 		}
 		
 		
+		protected function onInpointMove(event:TimeControlViewEvent):void
+		{
+			engine.timeControl.loopIn += event.deltaTime;
+			_timeControlView.setLoopInButton(engine.timeControl.loopIn);
+		}
+		
+		protected function onOutpointMove(event:TimeControlViewEvent):void
+		{
+			engine.timeControl.loopOut += event.deltaTime;
+			_timeControlView.setLoopOutButton(engine.timeControl.loopOut);
+		}
 		
 		
 		
