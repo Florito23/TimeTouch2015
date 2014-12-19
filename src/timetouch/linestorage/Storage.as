@@ -2,7 +2,7 @@ package timetouch.linestorage
 {
 	import logger.print;
 
-	public class LineStorage
+	public class Storage
 	{
 		
 		public function get linesByID():Object
@@ -18,7 +18,7 @@ package timetouch.linestorage
 		
 		private var _allSegments:Vector.<SegmentVO>;
 		
-		public function LineStorage()
+		public function Storage()
 		{
 			_linesById = new Object();
 			_lines = new Vector.<LineVO>();

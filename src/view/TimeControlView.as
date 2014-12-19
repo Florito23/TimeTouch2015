@@ -48,14 +48,15 @@ package view
 		public function TimeControlView()
 		{
 			super();
-			addEventListener(Event.ADDED_TO_STAGE, onStage);
+			//addEventListener(Event.ADDED_TO_STAGE, onStage);
+			initGUI();
 		}
 		
-		protected function onStage(event:Event):void
+		/*protected function onStage(event:Event):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onStage);
 			initGUI();
-		}
+		}*/
 		
 		private function initGUI():void
 		{

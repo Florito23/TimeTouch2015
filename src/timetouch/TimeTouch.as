@@ -4,11 +4,12 @@ package timetouch
 	
 	import logger.print;
 	
-	import timetouch.linestorage.LineStorage;
 	import timetouch.linestorage.LineVO;
+	import timetouch.linestorage.Storage;
 	import timetouch.renderer.Renderer;
-	import timetouch.surface.DrawingSurface;
-	import timetouch.surface.DrawingSurfaceEvent;
+	import timetouch.surface.TouchSurfaceEvent;
+	import timetouch.surface.IDrawingSurface;
+	import timetouch.surface.TouchSurface;
 	import timetouch.timecontrol.DefaultTimeControl;
 	import timetouch.timecontrol.TimeControl;
 	import timetouch.timecontrol.TimeControlEvent;
@@ -17,9 +18,11 @@ package timetouch
 	{
 		
 		private var _timeControl:TimeControl;
-		private var _drawingSurface:DrawingSurface;
 		
-		private var _storage:LineStorage;
+		private var _touchSurface:TouchSurface;
+		private var _drawingSurface:IDrawingSurface;
+		
+		private var _storage:Storage;
 		//private var _creatingLines:LineStorage;		
 
 		private var _renderer:Renderer;
@@ -28,12 +31,12 @@ package timetouch
 		{
 			super();
 			
-			_storage = new LineStorage();
+			_storage = new Storage();
 		//	_creatingLines = new LineStorage();
 			_renderer = new Renderer();
 			
 			timeControl = new DefaultTimeControl(TimeControl.INTERNAL_CLOCK);
-			drawingSurface = new DrawingSurface();
+			//drawingSurface = new IDrawingSurface();
 			
 		}
 		
@@ -69,22 +72,27 @@ package timetouch
 		
 		
 		
-		public function set drawingSurface(s:DrawingSurface):void
+		public function set touchSurface(s:TouchSurface):void
 		{
-			if (_drawingSurface) {
-				_drawingSurface.removeEventListener(DrawingSurfaceEvent.DRAWING_BEGIN, onDrawBegin);
-				_drawingSurface.removeEventListener(DrawingSurfaceEvent.DRAWING_MOVE, onDrawMove);
-				_drawingSurface.removeEventListener(DrawingSurfaceEvent.DRAWING_END, onDrawEnd);
+			if (_touchSurface) {
+				_touchSurface.removeEventListener(TouchSurfaceEvent.DRAWING_BEGIN, onDrawBegin);
+				_touchSurface.removeEventListener(TouchSurfaceEvent.DRAWING_MOVE, onDrawMove);
+				_touchSurface.removeEventListener(TouchSurfaceEvent.DRAWING_END, onDrawEnd);
 			}
+			_touchSurface = s;
+			_touchSurface.addEventListener(TouchSurfaceEvent.DRAWING_BEGIN, onDrawBegin);
+			_touchSurface.addEventListener(TouchSurfaceEvent.DRAWING_MOVE, onDrawMove);
+			_touchSurface.addEventListener(TouchSurfaceEvent.DRAWING_END, onDrawEnd);
+		}
+		
+		public function set drawingSurface(s:IDrawingSurface):void
+		{
 			_drawingSurface = s;
-			_drawingSurface.addEventListener(DrawingSurfaceEvent.DRAWING_BEGIN, onDrawBegin);
-			_drawingSurface.addEventListener(DrawingSurfaceEvent.DRAWING_MOVE, onDrawMove);
-			_drawingSurface.addEventListener(DrawingSurfaceEvent.DRAWING_END, onDrawEnd);
 		}
 		
 		
 		
-		protected function onDrawBegin(e:DrawingSurfaceEvent):void {
+		protected function onDrawBegin(e:TouchSurfaceEvent):void {
 			
 			print(this, "onDrawBegin()", e.touchID, e.x, e.y);
 			
@@ -94,7 +102,7 @@ package timetouch
 			_storage.startLineByID(e.touchID, e.x, e.y, time, time+3000);
 		}
 		
-		protected function onDrawMove(e:DrawingSurfaceEvent):void {
+		protected function onDrawMove(e:TouchSurfaceEvent):void {
 			print(this, "onDrawMove()", e.touchID, e.x, e.y);
 			
 			var lastTime:Number = _timeControl.lastTimeMilliseconds;
@@ -119,7 +127,7 @@ package timetouch
 			_storage.finishAndRestartCurrentLines(time, time+3000);
 		}
 		
-		protected function onDrawEnd(e:DrawingSurfaceEvent):void {
+		protected function onDrawEnd(e:TouchSurfaceEvent):void {
 			print(this, "onDrawEnd()", e.touchID, e.x, e.y);
 			
 			var lastTime:Number = _timeControl.lastTimeMilliseconds;

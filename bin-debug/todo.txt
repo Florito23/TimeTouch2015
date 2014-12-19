@@ -1,4 +1,6 @@
 
+
+TODO:
 -- Organized getting of segments from storage ---
 
 In LineStorage, change getSegmentsAtTime to return 

@@ -1,8 +1,8 @@
 package view
 {
-	import flash.display.Sprite;
+	import timetouch.surface.TouchSurface;
 	
-	public class CurvedBackground extends Sprite
+	public class CurvedBackground extends TouchSurface
 	{
 		public function CurvedBackground(x:Number, y:Number, width:Number, height:Number)
 		{

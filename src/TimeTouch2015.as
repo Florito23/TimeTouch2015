@@ -11,11 +11,12 @@ package
 	import logger.print;
 	
 	import timetouch.TimeTouch;
-	import timetouch.linestorage.LineStorage;
+	import timetouch.linestorage.Storage;
 	import timetouch.timecontrol.TimeControl;
 	import timetouch.timecontrol.TimeControlEvent;
 	
-	import view.DrawingView;
+	import view.CurvedBackground;
+	import view.DrawingSurface;
 	import view.TimeControlView;
 	import view.TimeControlViewEvent;
 	
@@ -37,7 +38,7 @@ package
 			
 			disableTraceForClass(TimeControlView);
 			disableTraceForClass(TimeTouch);
-			disableTraceForClass(LineStorage);
+			disableTraceForClass(Storage);
 			
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
 		}
@@ -97,14 +98,22 @@ package
 			_timeControlView.setLoopOutButton(engine.timeControl.loopOut);
 			addChild(_timeControlView);
 			
+			// touch view
+			var touch:CurvedBackground = new CurvedBackground(0,0,stage.stageWidth-20, stage.stageHeight-30-_timeControlView.height);
+			touch.x = _timeControlView.getBounds(this).x;
+			touch.y = _timeControlView.getBounds(this).bottom + 10;
+			addChild(touch);
 			
 			// drawing view
-			var drawingView:DrawingView = new DrawingView(stage.stageWidth-20, stage.stageHeight-30-_timeControlView.height);
-			drawingView.x = _timeControlView.getBounds(this).x;
-			drawingView.y = _timeControlView.getBounds(this).bottom + 10;
+			var drawingView:DrawingSurface = new DrawingSurface();
+			drawingView.x = touch.x;
+			drawingView.y = touch.y;
 			addChild(drawingView);
 			
+			// set engine drawing / touch
+			engine.touchSurface = touch;
 			engine.drawingSurface = drawingView;
+			
 		}
 		
 		
