@@ -3,6 +3,17 @@ package timetouch.linestorage
 	public class LineVO
 	{
 		
+		private static var ID_COUNT:uint = 0;
+		
+		/**
+		 * A unique id
+		 */
+		public function get id():uint
+		{
+			return _id;
+		}
+		private var _id:uint;
+		
 		public function get timeMinimum():Number {
 			return _timeMinimum;
 		}
@@ -18,6 +29,7 @@ package timetouch.linestorage
 		
 		public function LineVO($firstX:Number, $firstY:Number, $firstStartTime:Number, $firstEndTime:Number)
 		{
+			_id = ID_COUNT++;
 			_segments = new Vector.<SegmentVO>();
 			_startPoint = new PointVO($firstX, $firstY, $firstStartTime, $firstEndTime);
 			updateTimeExtremes($firstStartTime, $firstEndTime);
@@ -33,7 +45,7 @@ package timetouch.linestorage
 			
 			if (_startPoint) {
 				var secondPoint:PointVO = new PointVO(x, y, time, endTime);
-				var firstSegment:SegmentVO = new SegmentVO(_startPoint, secondPoint);
+				var firstSegment:SegmentVO = new SegmentVO(_id, _startPoint, secondPoint);
 				_segments.push(firstSegment);
 				_startPoint = null;
 				updateTimeExtremes(time, endTime);
@@ -42,7 +54,7 @@ package timetouch.linestorage
 			else {
 				var newPoint:PointVO = new PointVO(x, y, time, endTime);
 				var lastPoint:PointVO = _segments[_segments.length-1].B;
-				var otherSegment:SegmentVO = new SegmentVO(lastPoint, newPoint);
+				var otherSegment:SegmentVO = new SegmentVO(_id, lastPoint, newPoint);
 				_segments.push(otherSegment);
 				updateTimeExtremes(time, endTime);
 				return otherSegment;

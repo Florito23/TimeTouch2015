@@ -94,7 +94,7 @@ package timetouch.linestorage
 		
 		
 		
-		public function updateDrawableStatusAndGetLines(ti:Number):Vector.<LineVO>
+		/*public function updateDrawableStatusAndGetLines(ti:Number):Vector.<LineVO>
 		{
 			var t:Number = getTimer();
 			var out:Vector.<LineVO> = new Vector.<LineVO>();
@@ -121,7 +121,7 @@ package timetouch.linestorage
 			}
 			print(this, "updateDrawable()", (getTimer()-t));
 			return out;
-		}
+		}*/
 		
 		/*public function getLinesAtTime(ti:Number):Vector.<LineVO> {
 			var out:Vector.<LineVO> = new Vector.<LineVO>();
@@ -142,6 +142,7 @@ package timetouch.linestorage
 			//var t:GetTimer();
 			var out:Vector.<SegmentVO> = new Vector.<SegmentVO>();
 			
+			//TODO: here we can use the lineID of the segment to check for start/end line?
 			
 			for each (var seg:SegmentVO in _allSegments) {
 				

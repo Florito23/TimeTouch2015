@@ -5,6 +5,8 @@ package timetouch.linestorage
 	public class SegmentVO
 	{
 		
+		public var parentLineID:uint;
+		
 		public var A:PointVO;
 		public var B:PointVO;
 		
@@ -15,10 +17,11 @@ package timetouch.linestorage
 		public var lowestTime:Number;
 		public var highestTime:Number;
 		
-		public var drawableFlag:Boolean = false;
+		//public var drawableFlag:Boolean = false;
 		
-		public function SegmentVO(A:PointVO,B:PointVO)
+		public function SegmentVO(parentLineID:uint, A:PointVO,B:PointVO)
 		{
+			this.parentLineID = parentLineID;
 			this.A = A;
 			this.B = B;
 			AToB = new Point(B.x-A.x, B.y-A.y);
