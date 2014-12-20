@@ -6,9 +6,8 @@ package timetouch.surface
 	public interface IDrawingSurface
 	{
 		
-		//TODO: to be removed
 		function drawSegments(segments:Vector.<SegmentVO>):void
-		function drawLines(lines:Vector.<LineVO>):void
+		//function drawLines(lines:Vector.<LineVO>):void
 		
 	}
 }

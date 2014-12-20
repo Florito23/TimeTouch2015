@@ -4,6 +4,7 @@ package timetouch
 	
 	import logger.print;
 	
+	import timetouch.linestorage.LineVO;
 	import timetouch.linestorage.SegmentVO;
 	import timetouch.linestorage.Storage;
 	import timetouch.surface.IDrawingSurface;
@@ -49,9 +50,15 @@ package timetouch
 		
 		public function render():void
 		{
+			//var ti:Number = _timeControl.currentTimeMilliseconds;
+			//var lines:Vector.<LineVO> = _storage.updateDrawableStatusAndGetLines(ti);
+			//_drawingSurface.drawLines(lines);
+			
+			//var lines:Vector.<LineVO> = _storage.getLinesAtTime(_timeControl.currentTimeMilliseconds);
+			//_drawingSurface.drawLines(lines);
+			
 			var segs:Vector.<SegmentVO> = _storage.getSegmentsAtTime(_timeControl.currentTimeMilliseconds);
 			_drawingSurface.drawSegments(segs);
-			//_renderer.render(_storage, _timeControl.currentTimeMilliseconds, _drawingSurface);
 		}
 		
 		protected function onUpdateTime(event:TimeControlEvent):void

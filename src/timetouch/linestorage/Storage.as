@@ -1,5 +1,7 @@
 package timetouch.linestorage
 {
+	import flash.utils.getTimer;
+	
 	import logger.print;
 
 	public class Storage
@@ -92,12 +94,54 @@ package timetouch.linestorage
 		
 		
 		
+		public function updateDrawableStatusAndGetLines(ti:Number):Vector.<LineVO>
+		{
+			var t:Number = getTimer();
+			var out:Vector.<LineVO> = new Vector.<LineVO>();
+			var segs:Vector.<SegmentVO>;
+			var count:int;
+			var i:int;
+			var seg:SegmentVO;
+			var A:PointVO;
+			var B:PointVO;
+			for each (var line:LineVO in _lines) {
+				if (ti>=line.timeMinimum && ti<line.timeMaximum) {
+					out.push(line);
+					segs = line._segments;
+					count = segs.length;
+					for (i=0;i<count;i++) {
+						seg = segs[i];
+						A = seg.A;
+						B = seg.B;
+						seg.drawableFlag =
+							ti >= A.startTime && ti < A.endTime &&
+							ti >= B.startTime && ti < B.endTime
+					}
+				}
+			}
+			print(this, "updateDrawable()", (getTimer()-t));
+			return out;
+		}
 		
+		/*public function getLinesAtTime(ti:Number):Vector.<LineVO> {
+			var out:Vector.<LineVO> = new Vector.<LineVO>();
+			
+			for each (var line:LineVO in _lines) {
+				if (ti>=line.timeMinimum && ti<line.timeMaximum) {
+					out.push(line);
+				}
+			}
+			
+			return out;
+		}*/
 		
 		public function getSegmentsAtTime(ti:Number):Vector.<SegmentVO> {
 			
 			//TODO: optimisation possible
+			
+			//var t:GetTimer();
 			var out:Vector.<SegmentVO> = new Vector.<SegmentVO>();
+			
 			
 			for each (var seg:SegmentVO in _allSegments) {
 				

@@ -15,6 +15,8 @@ package timetouch.linestorage
 		public var lowestTime:Number;
 		public var highestTime:Number;
 		
+		public var drawableFlag:Boolean = false;
+		
 		public function SegmentVO(A:PointVO,B:PointVO)
 		{
 			this.A = A;

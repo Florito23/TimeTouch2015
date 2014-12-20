@@ -3,13 +3,24 @@ package timetouch.linestorage
 	public class LineVO
 	{
 		
-		private var _startPoint:PointVO;
-		private var _segments:Vector.<SegmentVO>;
+		public function get timeMinimum():Number {
+			return _timeMinimum;
+		}
+		private var _timeMinimum:Number = Number.MAX_VALUE;
 		
-		public function LineVO($firstX:Number, $firstY:Number, $firstStartTime:Number, $firstEndTime)
+		public function get timeMaximum():Number {
+			return _timeMaximum;
+		}
+		private var _timeMaximum:Number = Number.MIN_VALUE;
+		
+		private var _startPoint:PointVO;
+		public var _segments:Vector.<SegmentVO>;
+		
+		public function LineVO($firstX:Number, $firstY:Number, $firstStartTime:Number, $firstEndTime:Number)
 		{
 			_segments = new Vector.<SegmentVO>();
 			_startPoint = new PointVO($firstX, $firstY, $firstStartTime, $firstEndTime);
+			updateTimeExtremes($firstStartTime, $firstEndTime);
 		}
 		
 		public function get length():int
@@ -25,6 +36,7 @@ package timetouch.linestorage
 				var firstSegment:SegmentVO = new SegmentVO(_startPoint, secondPoint);
 				_segments.push(firstSegment);
 				_startPoint = null;
+				updateTimeExtremes(time, endTime);
 				return firstSegment;
 			}
 			else {
@@ -32,6 +44,7 @@ package timetouch.linestorage
 				var lastPoint:PointVO = _segments[_segments.length-1].B;
 				var otherSegment:SegmentVO = new SegmentVO(lastPoint, newPoint);
 				_segments.push(otherSegment);
+				updateTimeExtremes(time, endTime);
 				return otherSegment;
 			}
 		}
@@ -40,6 +53,12 @@ package timetouch.linestorage
 		{
 			var p:PointVO = _segments[_segments.length-1].B;
 			return p;
+		}
+		
+		private function updateTimeExtremes(t0:Number, t1:Number):void
+		{
+			_timeMinimum = Math.min(t0, t1, _timeMinimum);
+			_timeMaximum = Math.max(t0, t1, _timeMaximum);
 		}
 		
 		public function toString():String
