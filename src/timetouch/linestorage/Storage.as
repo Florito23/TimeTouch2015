@@ -94,9 +94,8 @@ package timetouch.linestorage
 		
 		
 		
-		public function getSegmentsAtTime(ti:Number):Vector.<SegmentVO> {
+		/*public function getSegmentsAtTime(ti:Number):Vector.<SegmentVO> {
 			
-			//TODO: optimisation possible
 			var out:Vector.<SegmentVO> = new Vector.<SegmentVO>();
 			
 			for each (var seg:SegmentVO in _allSegments) {
@@ -109,6 +108,42 @@ package timetouch.linestorage
 			
 			return out;
 			
+		}*/
+		
+		
+		//TODO: optimisation possible
+		
+		public function getCurrentLines(ti:Number):Vector.<SegmentCollectionVO> {
+			
+			var out:Vector.<SegmentCollectionVO> = new Vector.<SegmentCollectionVO>();
+			
+			// iterate through stored lines
+			for each (var line:LineVO in _lines) {
+				
+				// is this line visible at all during this time?
+				if (ti>=line.lowestTime && ti<line.highestTime) {
+					
+					var lineOut:SegmentCollectionVO = new SegmentCollectionVO();
+					
+					// iterate through segments
+					for each (var segment:SegmentVO in line.segments) {
+						
+						// add segment if both points are visible
+						if (ti>=segment.lowestTime && ti<segment.highestTime) {
+							lineOut.addSegment(segment);
+						}
+					}
+					
+					
+					if (lineOut.length>0) {
+						out.push(lineOut);
+					}
+					
+				}
+				
+			}
+			
+			return out;
 		}
 		
 		/*private function addLine(line:LineVO):void

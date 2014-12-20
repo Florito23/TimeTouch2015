@@ -1,4 +1,6 @@
-
+Added:
+LineVO now keeps track of lowest and highest time
+LineVO now extends SegmentCollectionVO
 
 TODO:
 

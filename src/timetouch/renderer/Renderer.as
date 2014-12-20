@@ -3,9 +3,10 @@ package timetouch.renderer
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	
-	import timetouch.linestorage.Storage;
 	import timetouch.linestorage.PointVO;
+	import timetouch.linestorage.SegmentCollectionVO;
 	import timetouch.linestorage.SegmentVO;
+	import timetouch.linestorage.Storage;
 	import timetouch.surface.IDrawingSurface;
 
 	public class Renderer
@@ -17,10 +18,11 @@ package timetouch.renderer
 		public function render(storage:Storage, currentTimeMilliseconds:Number, drawingSurface:IDrawingSurface):void
 		{
 			
-			var segs:Vector.<SegmentVO> = storage.getSegmentsAtTime(currentTimeMilliseconds);
-			//var dsp:DisplayObjectContainer = drawingSurface.getDrawingContainter();
+			var lines:Vector.<SegmentCollectionVO> = storage.getCurrentLines(currentTimeMilliseconds);
+			drawingSurface.drawSegmentCollections(lines);
 			
-			drawingSurface.drawSegments(segs);
+			//var segs:Vector.<SegmentVO> = storage.getSegmentsAtTime(currentTimeMilliseconds);
+			//drawingSurface.drawSegments(segs);
 			
 			/*dsp.removeChildren();
 			

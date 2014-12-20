@@ -1,0 +1,22 @@
+Added:
+LineVO now keeps track of lowest and highest time
+LineVO now extends SegmentCollectionVO
+
+TODO:
+
+-- Adding MultiTouch in TouchSurface (IMPORTANT!) --
+
+-- Organized getting of segments from storage ---
+
+In LineStorage, change getSegmentsAtTime to return 
+an array of Vector of SegmentVO, based on their parent Line.
+That way we can actually draw begin and end caps.
+
+The current caps actually just tell the first and last point of a line.
+Not really relevant. We might actually remove this. Or reuse it for the segment getter of the LineStorage
+
+
+
+--- AbstractCanvas ---
+
+A canvas that does not extend any display object, but that provides methods for drawing.

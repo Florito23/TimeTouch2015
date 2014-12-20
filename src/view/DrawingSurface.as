@@ -7,6 +7,7 @@ package view
 	
 	import timetouch.linestorage.LineVO;
 	import timetouch.linestorage.PointVO;
+	import timetouch.linestorage.SegmentCollectionVO;
 	import timetouch.linestorage.SegmentVO;
 	import timetouch.surface.IDrawingSurface;
 	import timetouch.surface.TouchSurface;
@@ -33,16 +34,28 @@ package view
 			
 		}
 		
+		public function drawSegmentCollections(lines:Vector.<SegmentCollectionVO>):void
+		{
+			_draw.removeChildren();
+			for each (var line:SegmentCollectionVO in lines) {
+				
+				for each (var seg:SegmentVO in line.segments) {
+					
+					var spr:Sprite = new Sprite();
+					spr.mouseEnabled = false;
+					spr.graphics.lineStyle(2,0x880000);
+					spr.graphics.moveTo(seg.A.x, seg.A.y);
+					spr.graphics.lineTo(seg.B.x, seg.B.y);
+					
+					_draw.addChild(spr);
+					
+				}
+				
+			}
+		}
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		public function drawSegments(segments:Vector.<SegmentVO>):void {
+		/*public function drawSegments(segments:Vector.<SegmentVO>):void {
 			_draw.removeChildren();
 			
 			for each (var seg:SegmentVO in segments) {
@@ -59,7 +72,7 @@ package view
 		}
 		public function drawLines(lines:Vector.<LineVO>):void {
 			//TODO: 
-		}
+		}*/
 		
 		
 		
