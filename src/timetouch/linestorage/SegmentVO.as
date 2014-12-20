@@ -12,7 +12,14 @@ package timetouch.linestorage
 		
 		public var AToB:Point;
 		public var magnitude:Number;
+		
+		public function get isPoint():Boolean {
+			return normalizedAToB==null;
+		}
+		
 		public var normalizedAToB:Point = null;
+		public var tangentialRight:Point = null;
+		public var tangentialLeft:Point = null;
 		
 		public var lowestTime:Number;
 		public var highestTime:Number;
@@ -28,6 +35,8 @@ package timetouch.linestorage
 			magnitude = AToB.length;
 			if (magnitude>0) {
 				normalizedAToB = new Point(AToB.x/magnitude, AToB.y/magnitude);
+				tangentialRight = new Point(-normalizedAToB.y, normalizedAToB.x);
+				tangentialLeft = new Point(normalizedAToB.y, -normalizedAToB.x);
 			}
 			
 			var a0:Number = A.startTime;

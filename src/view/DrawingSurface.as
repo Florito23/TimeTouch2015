@@ -76,9 +76,36 @@ package view
 				
 				var spr:Sprite = new Sprite();
 				spr.mouseEnabled = false;
-				spr.graphics.lineStyle(2,0x880000);
-				spr.graphics.moveTo(seg.A.x, seg.A.y);
-				spr.graphics.lineTo(seg.B.x, seg.B.y);
+				
+				
+				if (seg.isPoint) {
+					spr.graphics.beginFill(0x000088);
+					spr.graphics.drawCircle(seg.A.x-1, seg.A.y-1, 1);
+				}
+				
+				else {
+					spr.graphics.lineStyle(2,0x000088);
+					spr.graphics.moveTo(seg.A.x, seg.A.y);
+					spr.graphics.lineTo(seg.B.x, seg.B.y);
+				
+					var mx:Number = (seg.A.x+seg.B.x)/2;
+					var my:Number = (seg.A.y+seg.B.y)/2;
+					
+					spr.graphics.lineStyle(1,0x880000);
+					spr.graphics.moveTo(mx, my);
+					var tx:Number = seg.tangentialRight.x * 5;
+					var ty:Number = seg.tangentialRight.y * 5;
+					spr.graphics.lineTo(mx+tx, my+ty);
+					
+					spr.graphics.lineStyle(1,0x008800);
+					spr.graphics.moveTo(mx, my);
+					tx = seg.tangentialLeft.x * 5;
+					ty = seg.tangentialLeft.y * 5;
+					spr.graphics.lineTo(mx+tx, my+ty);
+					
+					
+				}
+				
 				_draw.addChild(spr);
 				
 			}
