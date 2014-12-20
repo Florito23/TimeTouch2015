@@ -40,7 +40,7 @@ package timetouch.surface
 		
 		protected function onMouseBegin(event:MouseEvent):void
 		{
-			print(this, "onMouseBegin()");
+			//print(this, "onMouseBegin()");
 			if (!_mouseDragging) {
 				_mouseDragging = true;
 				var loc:Point = globalToLocal(new Point(event.stageX, event.stageY));

@@ -53,15 +53,6 @@ package view
 				spr.graphics.moveTo(seg.A.x, seg.A.y);
 				spr.graphics.lineTo(seg.B.x, seg.B.y);
 				
-				if (seg.A.type == PointVO.TYPE_CAP) {
-					spr.graphics.beginFill(0x008800);
-					spr.graphics.drawRect(seg.A.x-2, seg.A.y-2, 4, 4);
-				}
-				if (seg.B.type == PointVO.TYPE_CAP) {
-					spr.graphics.beginFill(0x008800);
-					spr.graphics.drawRect(seg.B.x-2, seg.B.y-2, 4, 4);
-				}
-				
 				_draw.addChild(spr);
 				
 			}

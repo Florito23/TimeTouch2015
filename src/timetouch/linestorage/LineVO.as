@@ -9,7 +9,7 @@ package timetouch.linestorage
 		public function LineVO($firstX:Number, $firstY:Number, $firstStartTime:Number, $firstEndTime)
 		{
 			_segments = new Vector.<SegmentVO>();
-			_startPoint = new PointVO($firstX, $firstY, $firstStartTime, $firstEndTime, PointVO.TYPE_CAP);
+			_startPoint = new PointVO($firstX, $firstY, $firstStartTime, $firstEndTime);
 		}
 		
 		public function get length():int
@@ -21,16 +21,15 @@ package timetouch.linestorage
 		{
 			
 			if (_startPoint) {
-				var secondPoint:PointVO = new PointVO(x, y, time, endTime, PointVO.TYPE_CAP);
+				var secondPoint:PointVO = new PointVO(x, y, time, endTime);
 				var firstSegment:SegmentVO = new SegmentVO(_startPoint, secondPoint);
 				_segments.push(firstSegment);
 				_startPoint = null;
 				return firstSegment;
 			}
 			else {
-				var newPoint:PointVO = new PointVO(x, y, time, endTime, PointVO.TYPE_CAP);
+				var newPoint:PointVO = new PointVO(x, y, time, endTime);
 				var lastPoint:PointVO = _segments[_segments.length-1].B;
-				lastPoint.type = PointVO.TYPE_INBETWEEN;
 				var otherSegment:SegmentVO = new SegmentVO(lastPoint, newPoint);
 				_segments.push(otherSegment);
 				return otherSegment;
@@ -40,7 +39,6 @@ package timetouch.linestorage
 		public function finishLastPoint():PointVO
 		{
 			var p:PointVO = _segments[_segments.length-1].B;
-			p.type = PointVO.TYPE_CAP;
 			return p;
 		}
 		
@@ -66,7 +64,6 @@ package timetouch.linestorage
 		private function pointToString(_startPoint:PointVO):String
 		{
 			return "("
-				+ (_startPoint.type==PointVO.TYPE_CAP ? "CAP " : "- ")
 				+ _startPoint.x.toFixed(1)
 				+ "/"
 				+ _startPoint.y.toFixed(1)
